@@ -1,83 +1,61 @@
 pipeline {
     agent any
-    environment {
-        // Define environment variables here if necessary
-        STAGING_SERVER = 'staging.example.com'
-        PRODUCTION_SERVER = 'prod.example.com'
-        RECIPIENT_EMAIL = 'your-email@example.com'
-    }
     stages {
         stage('Build') {
             steps {
-                echo 'Building the project...'
-                // Add a real build tool, such as Maven
-                sh 'mvn clean package'
+                echo 'Stage 1: Building the code using Maven'
+                // Tool: Maven
             }
         }
-
         stage('Unit and Integration Tests') {
             steps {
-                echo 'Running Unit and Integration Tests...'
-                // Unit testing with a test framework like JUnit
-                sh 'mvn test'
+                echo 'Stage 2: Running unit and integration tests using JUnit'
+                // Tool: JUnit (for unit tests), Selenium (for integration tests)
             }
         }
-
         stage('Code Analysis') {
             steps {
-                echo 'Performing Code Analysis...'
-                // Example tool: SonarQube
-                sh 'sonar-scanner'
+                echo 'Stage 3: Running code analysis using SonarQube'
+                // Tool: SonarQube
             }
         }
-
         stage('Security Scan') {
             steps {
-                echo 'Performing Security Scan...'
-                // Example tool: OWASP Dependency Check
-                sh 'dependency-check --project MyProject --scan ./'
+                echo 'Stage 4: Running security scan using OWASP Dependency Check'
+                // Tool: OWASP Dependency Check
             }
         }
-
         stage('Deploy to Staging') {
             steps {
-                echo 'Deploying to Staging Environment...'
-                // Deploy to a staging server (you can replace this with real deployment commands)
-                sh 'scp target/myapp.war user@$STAGING_SERVER:/var/www/myapp'
+                echo 'Stage 5: Deploying to a staging environment (e.g., AWS EC2)'
+                // Deployment tool could be AWS CLI or Terraform
             }
         }
-
         stage('Integration Tests on Staging') {
             steps {
-                echo 'Running Integration Tests on Staging...'
-                // Run tests on the staging environment (could be automated using Selenium, etc.)
-                sh 'curl http://$STAGING_SERVER/myapp/healthcheck'
+                echo 'Stage 6: Running integration tests on staging using Selenium'
+                // Tool: Selenium
             }
         }
-
         stage('Deploy to Production') {
             steps {
-                echo 'Deploying to Production Environment...'
-                // Deploy to production server
-                sh 'scp target/myapp.war user@$PRODUCTION_SERVER:/var/www/myapp'
+                echo 'Stage 7: Deploying to production environment (e.g., AWS EC2)'
+                // Deployment tool could be AWS CLI or Terraform
             }
         }
     }
-
     post {
         success {
-            echo 'Pipeline completed successfully.'
-            emailext to: "${oshan3929@gmail.com}",
-                     subject: "Pipeline Success: ${env.JOB_NAME}",
-                     body: "Pipeline ${env.JOB_NAME} has completed successfully on ${env.BUILD_URL}",
-                     attachLog: true
+            echo 'Pipeline completed successfully'
+            mail to: 'oshan3929@gmail.com',
+                 subject: "Pipeline Success",
+                 body: "The pipeline completed successfully."
         }
         failure {
-            echo 'Pipeline failed.'
-            emailext to: "${oshan3929@gmail.com}",
-                     subject: "Pipeline Failed: ${env.JOB_NAME}",
-                     body: "Pipeline ${env.JOB_NAME} has failed. Please check the logs: ${env.BUILD_URL}",
-                     attachLog: true
+            echo 'Pipeline failed'
+            mail to: 'oshan3929@gmail.com',
+                 subject: "Pipeline Failed",
+                 body: "The pipeline failed."
         }
     }
 }
